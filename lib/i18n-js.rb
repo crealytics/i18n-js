@@ -115,10 +115,21 @@ module SimplesIdeias
       File.open(javascript_file, "w+") {|f| f << contents}
     end
 
+    def sort(hash)
+      result = {}
+      hash.keys.sort.each do |key|
+        value = hash[key]
+        value = sort(value) if value.is_a? Hash
+        result[key] = value
+      end
+      result
+    end
+
     # Convert translations to JSON string and save file.
     def save(translations, file)
       file = Rails.root.join(file)
       FileUtils.mkdir_p File.dirname(file)
+      translations = sort(translations)
 
       File.open(file, "w+") do |f|
         f << %(var I18n = I18n || {};\n)
